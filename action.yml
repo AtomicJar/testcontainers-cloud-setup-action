@@ -1,0 +1,20 @@
+name: 'Testcontainers Cloud'
+description: 'Download and setup Testcontainers Cloud'
+runs:
+  using: 'composite'
+  steps:
+    - id: testcontainers-cloud
+      shell: bash
+      run: |
+        # determine the architecture of the platform 
+        suffix=$([[ $(uname -m) == "aarch64" ]] && echo "arm64" || echo "x86-64")
+  
+        # fetch the latest TCC agent version and make it executable
+        curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_$suffix
+        chmod +x agent
+        
+        # start agent as background process
+        ./agent &
+        
+        # make sure TCC is ready before proceeding
+        ./agent wait
