@@ -32,3 +32,12 @@ jobs:
       - name: Build with Maven
         run: mvn -V -B verify
 ```
+
+### Define the Operative System
+```
+    - name: Setup testcontainers-cloud
+        uses: atomicjar/testcontainers-cloud-setup-action@main
+        with:
+          os: windows
+        
+```
