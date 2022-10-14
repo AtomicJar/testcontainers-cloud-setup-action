@@ -7,10 +7,17 @@ runs:
       shell: bash
       run: |
         # determine the architecture of the platform 
-        suffix=$([[ $(uname -m) == "aarch64" ]] && echo "arm64" || echo "x86-64")
+        suffix=$([[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]] && echo "arm64" || echo "x86-64")
+        
+        # determine the os for the agent
+        [[ $RUNNER_OS == "macOS" ]] && os="darwin" || os=$([[ $RUNNER_OS == "Windows" ]] && echo "windows" || echo "linux")
+        
+        # determine the extension of the package
+        extension=$([[ $os == "windows" ]] && echo ".exe")
   
         # fetch the latest TCC agent version and make it executable
-        curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_linux_$suffix
+        echo "Downloading https://app.testcontainers.cloud/download/testcontainers-cloud-agent_$os_$suffix$extension"
+        curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_$os_$suffix$extension
         chmod +x agent
         
         # start agent as background process
