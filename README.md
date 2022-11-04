@@ -14,9 +14,6 @@ on:
 permissions:
   contents: read
 
-env:
-  TC_CLOUD_TOKEN: ${{ secrets.TC_CLOUD_TOKEN }}
-
 jobs:
   build:
     name: "Run checks"
@@ -25,6 +22,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup testcontainers-cloud
         uses: atomicjar/testcontainers-cloud-setup-action@main
+        env:
+          TC_CLOUD_TOKEN: ${{ secrets.TC_CLOUD_TOKEN }}
+
       - uses: actions/setup-java@v3
         with:
           java-version: '8.0.345'
