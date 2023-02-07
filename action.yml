@@ -1,10 +1,21 @@
 name: 'Testcontainers Cloud'
-description: 'Download and setup Testcontainers Cloud'
+description: 'Download and setup Testcontainers Cloud Client'
+inputs:
+  version:
+    description: 'Specific version of Testcontainers Cloud Client to use'
+    required: false
+    default: 'latest'
+  token:
+    description: 'Testcontainers Cloud API token'
+    required: false
+    default: ${{ env.TC_CLOUD_TOKEN }}
 runs:
   using: 'composite'
   steps:
     - id: testcontainers-cloud
       shell: bash
+      env:
+        TC_CLOUD_TOKEN: ${{ inputs.token }}
       run: |
         # determine the architecture of the platform 
         suffix=$([[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]] && echo "arm64" || echo "x86-64")
@@ -14,14 +25,20 @@ runs:
         
         # determine the extension of the package
         extension=$([[ $os == "windows" ]] && echo ".exe" || echo "")
+        
+        TCC_BINARY_NAME=${TCC_BINARY_NAME:-"tcc-agent"}
+        
+        VERSION=${{ inputs.version }}
+        
+        LATEST_BINARY_URL="https://app.testcontainers.cloud/download/testcontainers-cloud-agent_${VERSION}_${os}_${suffix}${extension}" 
 
         # fetch the latest TCC agent version and make it executable
-        echo "Downloading https://app.testcontainers.cloud/download/testcontainers-cloud-agent_${os}_${suffix}${extension}"
-        curl -L -o agent https://app.testcontainers.cloud/download/testcontainers-cloud-agent_${os}_${suffix}${extension}
-        chmod +x agent
+        echo "Downloading ${LATEST_BINARY_URL}"
+        curl -fsSL -o "${TCC_BINARY_NAME}" "${LATEST_BINARY_URL}"
+        chmod +x ${TCC_BINARY_NAME}
         
         # start agent as background process
-        ./agent &
+        ./"${TCC_BINARY_NAME}" &
         
         # make sure TCC is ready before proceeding
-        ./agent wait
+        ./"${TCC_BINARY_NAME}" wait
