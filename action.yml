@@ -8,14 +8,13 @@ inputs:
   token:
     description: 'Testcontainers Cloud API token'
     required: false
-    default: ${{ env.TC_CLOUD_TOKEN }}
 runs:
   using: 'composite'
   steps:
     - id: testcontainers-cloud
       shell: bash
       env:
-        TC_CLOUD_TOKEN: ${{ inputs.token }}
+        TC_CLOUD_TOKEN: ${{ inputs.token || env.TC_CLOUD_TOKEN }}
       run: |
         # determine the architecture of the platform 
         suffix=$([[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]] && echo "arm64" || echo "x86-64")
