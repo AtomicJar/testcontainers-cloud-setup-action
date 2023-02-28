@@ -1,0 +1,69 @@
+name: TCC GitHub Action
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+jobs:
+  defaults:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Testcontainers Cloud Client with defaults
+        uses: ./
+        with:
+          token: ${{ secrets.TC_CLOUD_TOKEN }}
+
+  without-wait-with-additional-args:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Testcontainers Cloud Client with registry without wait
+        uses: ./
+        with:
+          version: next
+          token: ${{ secrets.TC_CLOUD_TOKEN }}
+          wait: false
+          args: "--private-registry-url=http://localhost:5000 '--private-registry-allowed-image-name-globs=*,*/*'"
+        env:
+          TC_CLOUD_LOGS_VERBOSE: true
+
+  with-custom-binary-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Testcontainers Cloud Client with custom binary name
+        uses: ./
+        with:
+          token: ${{ secrets.TC_CLOUD_TOKEN }}
+          wait: false
+        env:
+          TCC_BINARY_NAME: tcc
+
+  with-logfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Testcontainers Cloud Client with logfile
+        uses: ./
+        with:
+          version: next
+          token: ${{ secrets.TC_CLOUD_TOKEN }}
+          wait: false
+          logfile: testcontainers-client.log
+
+      - name: Upload output file
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: output-log-file
+          path: testcontainers-client.log
+          retention-days: 30
