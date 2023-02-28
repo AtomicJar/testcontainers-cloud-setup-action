@@ -36,7 +36,9 @@ jobs:
 
 ## Configurable parameters
 
-- `token` (__required__):  `secret-string` - service account token for Testcontainers Cloud
+- `token` (__required__):  `secret-string` - service account token for Testcontainers 
+Cloud
+- `version` (__optional__):  `latest` (default) - Testcontainers Cloud binary version
 - `wait` (_optional_):  `true` (default) /`false` - if action should wait until agent successfully connects to Testcontainers Cloud in advance
 - `args` (_optional_): `string` - flags/arguments of the agent to pass as is. Consult with the knowledge base to find out more about possible options.
 - `logfile` (_optional_): `string` - file to write the agent output instead of the standard out.
