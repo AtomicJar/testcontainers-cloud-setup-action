@@ -1,4 +1,5 @@
 name: 'Testcontainers Cloud'
+author: 'AtomicJar'
 description: 'Download and setup Testcontainers Cloud Client'
 inputs:
   version:
@@ -8,14 +9,29 @@ inputs:
   token:
     description: 'Testcontainers Cloud API token'
     required: false
+  wait:
+    description: 'If Testcontainers Cloud Client should wait for a connection before proceeding'
+    required: false
+    default: 'true'
+  args:
+    description: 'Additional Testcontainers Cloud Client args, not explicitly defined in the action'
+    required: false
+  logfile:
+    description: 'Write Testcontainers Cloud Client output into specified logfile'
+    required: false
 runs:
   using: 'composite'
   steps:
     - id: testcontainers-cloud
+      name: Download and run Testcontainers Cloud Client
       shell: bash
       env:
         TC_CLOUD_TOKEN: ${{ inputs.token || env.TC_CLOUD_TOKEN }}
+        TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
+        TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
       run: |
+        # download and run the agent at the background
+        
         # determine the architecture of the platform 
         suffix=$([[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]] && echo "arm64" || echo "x86-64")
         
@@ -25,11 +41,13 @@ runs:
         # determine the extension of the package
         extension=$([[ $os == "windows" ]] && echo ".exe" || echo "")
         
-        TCC_BINARY_NAME=${TCC_BINARY_NAME:-"tcc-agent"}
-        
         VERSION=${{ inputs.version }}
         
+        TCC_AGENT_ARGS="${{ inputs.args }}"
+        
         LATEST_BINARY_URL="https://app.testcontainers.cloud/download/testcontainers-cloud-agent_${VERSION}_${os}_${suffix}${extension}" 
+        
+        TCC_LOGFILE="${{ inputs.logfile }}"
 
         # fetch the latest TCC agent version and make it executable
         echo "Downloading ${LATEST_BINARY_URL}"
@@ -37,7 +55,20 @@ runs:
         chmod +x ${TCC_BINARY_NAME}
         
         # start agent as background process
-        ./"${TCC_BINARY_NAME}" &
+        if [ $TCC_LOGFILE ]
+        then
+           TC_CLOUD_LOGS_ENABLE_COLORS=false ./"${TCC_BINARY_NAME}" ${TCC_AGENT_ARGS} > "${TCC_LOGFILE}" 2>&1 & 
+        else      
+           ./"${TCC_BINARY_NAME}" ${TCC_AGENT_ARGS} &
+        fi
         
-        # make sure TCC is ready before proceeding
+    - id: testcontainers-cloud-client-wait
+      name: Make sure TCC is ready before proceeding
+      shell: bash
+      if: inputs.wait == 'true'
+      env:
+        TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
+        TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
+      run: |
+        # waiting for agent successful connection
         ./"${TCC_BINARY_NAME}" wait
