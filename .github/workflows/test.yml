@@ -49,6 +49,23 @@ jobs:
         env:
           TCC_BINARY_NAME: tcc
 
+
+  with-terminate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Testcontainers Cloud Client
+        uses: ./
+        with:
+          token: ${{ secrets.TC_CLOUD_TOKEN }}
+          wait: true
+      - name: Terminate active TCC sessions
+        uses: ./
+        with:
+          action: terminate
+
   with-logfile:
     runs-on: ubuntu-latest
     steps:
