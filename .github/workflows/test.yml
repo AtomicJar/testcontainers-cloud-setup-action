@@ -61,6 +61,7 @@ jobs:
         with:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
           wait: true
+          version: next
       - name: Terminate active TCC sessions
         uses: ./
         with:
