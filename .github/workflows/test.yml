@@ -62,10 +62,19 @@ jobs:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
           wait: true
           version: next
+          logfile: testcontainers-client-termination.log
       - name: Terminate active TCC sessions
         uses: ./
         with:
           action: terminate
+
+      - name: Upload output file
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: output-log-file
+          path: testcontainers-client-termination.log
+          retention-days: 5
 
   with-logfile:
     runs-on: ubuntu-latest
