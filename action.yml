@@ -19,6 +19,10 @@ inputs:
   logfile:
     description: 'Write Testcontainers Cloud Client output into specified logfile'
     required: false
+  action:
+    description: 'What should be done exactly: prepare|terminate'
+    required: false
+    default: prepare
 runs:
   using: 'composite'
   steps:
@@ -29,6 +33,7 @@ runs:
         TC_CLOUD_TOKEN: ${{ inputs.token || env.TC_CLOUD_TOKEN }}
         TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
         TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
+      if: inputs.action == 'prepare'
       run: |
         # download and run the agent at the background
         
@@ -43,7 +48,7 @@ runs:
         
         VERSION=${{ inputs.version }}
         
-        TCC_AGENT_ARGS="${{ inputs.args }}"
+        TCC_AGENT_ARGS="${{ inputs.args }} --terminate"
         
         LATEST_BINARY_URL="https://app.testcontainers.cloud/download/testcontainers-cloud-agent_${VERSION}_${os}_${suffix}${extension}" 
         
@@ -65,10 +70,21 @@ runs:
     - id: testcontainers-cloud-client-wait
       name: Make sure TCC is ready before proceeding
       shell: bash
-      if: inputs.wait == 'true'
+      if: inputs.wait == 'true' && inputs.action == 'prepare'
       env:
         TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
         TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
       run: |
         # waiting for agent successful connection
-        ./"${TCC_BINARY_NAME}" wait
+        ./"${TCC_BINARY_NAME}" wait        
+
+    - id: testcontainers-cloud-client-terminate
+      name: Make sure TCC is ready before proceeding
+      shell: bash
+      if: inputs.action == 'terminate'
+      env:
+        TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
+        TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
+      run: |
+        # Terminating active sessions
+        ./"${TCC_BINARY_NAME}" terminate
