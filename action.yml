@@ -38,16 +38,16 @@ runs:
       run: |
         projectKey="$GITHUB_REPOSITORY"
 
-        if [ -v INPUT_TCC_PROJECT_KEY ]; then
-          projectKey="$INPUT_TCC_PROJECT_KEY"
+        if [ -v INPUT_PROJECT-KEY ]; then
+          projectKey="$INPUT_PROJECT-KEY"
         elif [ -v TCC_PROJECT_KEY ]; then
           projectKey="$TCC_PROJECT_KEY"
         fi
 
         projectUrl="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
 
-        if [ -v INPUT_TCC_PROJECT_URL ]; then
-          projectUrl="$INPUT_TCC_PROJECT_URL"
+        if [ -v INPUT_PROJECT-URL ]; then
+          projectUrl="$INPUT_PROJECT-URL"
         elif [ -v TCC_PROJECT_URL ]; then
           projectUrl="$TCC_PROJECT_URL"
         fi
