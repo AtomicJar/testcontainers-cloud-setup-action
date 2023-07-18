@@ -39,8 +39,8 @@ runs:
         TC_CLOUD_TOKEN: ${{ inputs.token || env.TC_CLOUD_TOKEN }}
         TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
         TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
-        TCC_PROJECT_KEY: ${{ inputs.project-key || $GITHUB_REPOSITORY }}
-        TCC_PROJECT_URL: ${{ inputs.project-url || format('{0}/{1}', $GITHUB_SERVER_URL, $GITHUB_REPOSITORY) }}
+        TCC_PROJECT_KEY: ${{ inputs.project-key || env.TCC_PROJECT_KEY || env.GITHUB_REPOSITORY }}
+        TCC_PROJECT_URL: ${{ inputs.project-url || env.TCC_PROJECT_URL || format('{0}/{1}', env.GITHUB_SERVER_URL, env.GITHUB_REPOSITORY) }}
       if: inputs.action == 'prepare'
       run: |
         # download and run the agent at the background
