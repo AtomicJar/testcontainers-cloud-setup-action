@@ -107,7 +107,6 @@ jobs:
       - name: Setup Testcontainers Cloud Client with project-key and project-url
         uses: ./
         with:
-          version: next
           token: ${{ secrets.TC_CLOUD_TOKEN }}
           project-key: test
           project-url: https://testcontainers.cloud
