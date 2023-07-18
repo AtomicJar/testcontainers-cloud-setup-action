@@ -47,3 +47,5 @@ jobs:
 - `args` (_optional_): `string` - flags/arguments of the agent to pass as is. Consult with the knowledge base to find out more about possible options.
 - `logfile` (_optional_): `string` - file to write the agent output instead of the standard out.
 - `action` (_optional_): `prepare` (default) / `terminate` - action could be specified explicitly to terminate sessions eagerly.
+- `project-key` (_optional_): `GITHUB_REPOSITORY` (default) - project identifier
+- `project-url` (_optional_): `GITHUB_SERVER_URL/GITHUB_REPOSITORY` (default) - project's url
