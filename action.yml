@@ -32,6 +32,28 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - id: testcontainers-cloud-env-vars
+      name: Preparing Testcontainers env vars
+      shell: bash
+      run: |
+        projectKey="$GITHUB_REPOSITORY"
+
+        if [ -v INPUT_TCC_PROJECT_KEY ]; then
+          projectKey="$INPUT_TCC_PROJECT_KEY"
+        elif [ -v TCC_PROJECT_KEY ]; then
+          projectKey="$TCC_PROJECT_KEY"
+        fi
+
+        projectUrl="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+
+        if [ -v INPUT_TCC_PROJECT_URL ]; then
+          projectUrl="$INPUT_TCC_PROJECT_URL"
+        elif [ -v TCC_PROJECT_URL ]; then
+          projectUrl="$TCC_PROJECT_URL"
+        fi
+
+        echo "TCC_PROJECT_KEY=${projectKey}" >> $GITHUB_ENV
+        echo "TCC_PROJECT_URL=${projectUrl}" >> $GITHUB_ENV
     - id: testcontainers-cloud
       name: Download and run Testcontainers Cloud Client
       shell: bash
@@ -39,8 +61,6 @@ runs:
         TC_CLOUD_TOKEN: ${{ inputs.token || env.TC_CLOUD_TOKEN }}
         TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
         TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
-        TCC_PROJECT_KEY: ${{ inputs.project-key || env.TCC_PROJECT_KEY || env.GITHUB_REPOSITORY }}
-        TCC_PROJECT_URL: ${{ inputs.project-url || env.TCC_PROJECT_URL || format('{0}/{1}', env.GITHUB_SERVER_URL, env.GITHUB_REPOSITORY) }}
       if: inputs.action == 'prepare'
       run: |
         # download and run the agent at the background
