@@ -33,21 +33,22 @@ runs:
   using: 'composite'
   steps:
     - id: testcontainers-cloud-env-vars
-      name: Preparing Testcontainers env vars
+      name: Preparing Testcontainers Cloud env vars
       shell: bash
       run: |
+        # prepare tcc env vars
         projectKey="$GITHUB_REPOSITORY"
 
-        if [ -v INPUT_PROJECT-KEY ]; then
-          projectKey="$INPUT_PROJECT-KEY"
+        if [ -v ${{ inputs.project-key }} ]; then
+          projectKey="$${{ inputs.project-key }}"
         elif [ -v TCC_PROJECT_KEY ]; then
           projectKey="$TCC_PROJECT_KEY"
         fi
 
         projectUrl="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
 
-        if [ -v INPUT_PROJECT-URL ]; then
-          projectUrl="$INPUT_PROJECT-URL"
+        if [ -v ${{ inputs.project-url }} ]; then
+          projectUrl="${{ inputs.project-url }}"
         elif [ -v TCC_PROJECT_URL ]; then
           projectUrl="$TCC_PROJECT_URL"
         fi
