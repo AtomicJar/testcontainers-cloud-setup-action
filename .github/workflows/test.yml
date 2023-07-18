@@ -111,7 +111,7 @@ jobs:
           project-key: testcontainers-cloud-setup-action-custom
           project-url: https://testcontainers.cloud
 
-  with-project-keys-en-vars:
+  with-project-keys-as-env-vars:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
