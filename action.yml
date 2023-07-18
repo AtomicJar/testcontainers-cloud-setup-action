@@ -39,22 +39,25 @@ runs:
         # prepare tcc env vars
         projectKey="$GITHUB_REPOSITORY"
 
-        if [ -v ${{ inputs.project-key }} ]; then
-          projectKey="$${{ inputs.project-key }}"
-        elif [ -v TCC_PROJECT_KEY ]; then
+        if [[ ! -z "$INPUT_PROJECT_KEY" ]]; then
+          projectKey="$INPUT_PROJECT_KEY"
+        elif [[ ! -z "$TCC_PROJECT_KEY" ]]; then
           projectKey="$TCC_PROJECT_KEY"
         fi
 
         projectUrl="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
 
-        if [ -v ${{ inputs.project-url }} ]; then
-          projectUrl="${{ inputs.project-url }}"
-        elif [ -v TCC_PROJECT_URL ]; then
+        if [[ ! -z "$INPUT_PROJECT_URL" ]]; then
+          projectUrl="$INPUT_PROJECT_URL"
+        elif [[ ! -z "$TCC_PROJECT_URL" ]]; then
           projectUrl="$TCC_PROJECT_URL"
         fi
 
         echo "TCC_PROJECT_KEY=${projectKey}" >> $GITHUB_ENV
         echo "TCC_PROJECT_URL=${projectUrl}" >> $GITHUB_ENV
+      env:
+        INPUT_PROJECT_KEY: ${{ inputs.project-key }}
+        INPUT_PROJECT_URL: ${{ inputs.project-url }}
     - id: testcontainers-cloud
       name: Download and run Testcontainers Cloud Client
       shell: bash
