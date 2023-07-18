@@ -108,5 +108,5 @@ jobs:
         uses: ./
         with:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
-          project-key: test
+          project-key: testcontainers-cloud-setup-action-custom
           project-url: https://testcontainers.cloud
