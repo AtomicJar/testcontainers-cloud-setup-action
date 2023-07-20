@@ -97,3 +97,30 @@ jobs:
           name: output-log-file
           path: testcontainers-client.log
           retention-days: 30
+
+  with-project-keys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Testcontainers Cloud Client with project-key and project-url
+        uses: ./
+        with:
+          token: ${{ secrets.TC_CLOUD_TOKEN }}
+          project-key: testcontainers-cloud-setup-action-custom
+          project-url: https://testcontainers.cloud
+
+  with-project-keys-as-env-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Testcontainers Cloud Client with project-key and project-url
+        uses: ./
+        with:
+          token: ${{ secrets.TC_CLOUD_TOKEN }}
+        env:
+          TCC_PROJECT_KEY: testcontainers-cloud-setup-action-custom-env-var
+          TCC_PROJECT_URL: https://testcontainers.cloud

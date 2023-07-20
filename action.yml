@@ -23,9 +23,41 @@ inputs:
     description: 'What should be done exactly: prepare|terminate'
     required: false
     default: prepare
+  project-key:
+    description: 'Project identifier'
+    required: false
+  project-url:
+    description: 'Project URL'
+    required: false
 runs:
   using: 'composite'
   steps:
+    - id: testcontainers-cloud-env-vars
+      name: Preparing Testcontainers Cloud env vars
+      shell: bash
+      run: |
+        # prepare tcc env vars
+        projectKey="$GITHUB_REPOSITORY"
+
+        if [[ ! -z "$INPUT_PROJECT_KEY" ]]; then
+          projectKey="$INPUT_PROJECT_KEY"
+        elif [[ ! -z "$TCC_PROJECT_KEY" ]]; then
+          projectKey="$TCC_PROJECT_KEY"
+        fi
+
+        projectUrl="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+
+        if [[ ! -z "$INPUT_PROJECT_URL" ]]; then
+          projectUrl="$INPUT_PROJECT_URL"
+        elif [[ ! -z "$TCC_PROJECT_URL" ]]; then
+          projectUrl="$TCC_PROJECT_URL"
+        fi
+
+        echo "TCC_PROJECT_KEY=${projectKey}" >> $GITHUB_ENV
+        echo "TCC_PROJECT_URL=${projectUrl}" >> $GITHUB_ENV
+      env:
+        INPUT_PROJECT_KEY: ${{ inputs.project-key }}
+        INPUT_PROJECT_URL: ${{ inputs.project-url }}
     - id: testcontainers-cloud
       name: Download and run Testcontainers Cloud Client
       shell: bash
