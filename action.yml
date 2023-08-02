@@ -125,6 +125,6 @@ runs:
       shell: bash
       run: |
         # Build GitHub summary
-        leaseId = $(jq '.leases[0].id' /home/runner/.cache/AtomicJar/testcontainers.cloud.desktop/state.json -r)
+        leaseId = $(jq '.leases[0].id' $HOME/.cache/AtomicJar/testcontainers.cloud.desktop/state.json -r)
         echo "# Testcontainers Cloud"
         echo "See your dashboard [here](https://app.testcontainers.cloud/dashboard?workerId=$leaseId)" >> $GITHUB_STEP_SUMMARY
