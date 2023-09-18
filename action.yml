@@ -12,7 +12,7 @@ inputs:
   wait:
     description: 'If Testcontainers Cloud Client should wait for a connection before proceeding'
     required: false
-    default: 'true'
+    default: 'false'
   args:
     description: 'Additional Testcontainers Cloud Client args, not explicitly defined in the action'
     required: false
