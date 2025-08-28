@@ -49,3 +49,4 @@ jobs:
 - `action` (_optional_): `prepare` (default) / `terminate` - action could be specified explicitly to terminate sessions eagerly.
 - `project-key` (_optional_): `GITHUB_REPOSITORY` (default) - project identifier
 - `project-url` (_optional_): `GITHUB_SERVER_URL/GITHUB_REPOSITORY` (default) - project's url
+- `download-retries` (_optional_): `1` (default) - number of retry attempts to download Testcontainers Cloud Client before giving up.

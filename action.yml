@@ -29,10 +29,10 @@ inputs:
   project-url:
     description: 'Project URL'
     required: false
-  retry-attempts:
+  download-retries:
     description: 'The number of retry attempts to download Testcontainers Cloud Client before giving up'
     required: false
-    default: '0'
+    default: '1'
 runs:
   using: 'composite'
   steps:
@@ -69,6 +69,7 @@ runs:
         TC_CLOUD_TOKEN: ${{ inputs.token || env.TC_CLOUD_TOKEN }}
         TC_CLOUD_LOGS_ENABLE_COLORS: 'true'
         TCC_BINARY_NAME: ${{ env.TCC_BINARY_NAME || 'tcc-agent' }}
+        DOWNLOAD_RETRIES: ${{ inputs.download-retries }}
       if: inputs.action == 'prepare'
       run: |
         # download and run the agent at the background
@@ -92,8 +93,7 @@ runs:
 
         # fetch the latest TCC agent version and make it executable
         echo "Downloading ${LATEST_BINARY_URL}"
-        RETRIES=${{ inputs.retry-attempts }}
-        curl -fsSL -o "${TCC_BINARY_NAME}" "${LATEST_BINARY_URL}" --retry "${RETRIES}" --retry-all-errors
+        curl -fsSL -o "${TCC_BINARY_NAME}" "${LATEST_BINARY_URL}" --retry "${DOWNLOAD_RETRIES}" --retry-all-errors
         chmod +x ${TCC_BINARY_NAME}
         
         # start agent as background process
