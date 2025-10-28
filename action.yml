@@ -93,7 +93,7 @@ runs:
 
         # fetch the latest TCC agent version and make it executable
         echo "Downloading ${LATEST_BINARY_URL}"
-        curl -fsSL -o "${TCC_BINARY_NAME}" "${LATEST_BINARY_URL}" --retry "${DOWNLOAD_RETRIES}" --retry-all-errors
+        curl -v -fsSL -o "${TCC_BINARY_NAME}" "${LATEST_BINARY_URL}" --retry "${DOWNLOAD_RETRIES}" --retry-all-errors
         chmod +x ${TCC_BINARY_NAME}
         
         # start agent as background process
